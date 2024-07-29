@@ -1,0 +1,18 @@
+version: '3'
+services:
+  test:
+    build:
+      context: .
+      target: test
+    image: test
+    container_name: test
+    ports:
+      - "9090:80"
+  prod:
+    build:
+      context: .
+      target: prod
+    image: prod
+    container_name: prod
+    ports:
+      - "9091:80"
