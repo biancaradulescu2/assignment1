@@ -1,0 +1,16 @@
+name: PR Validation
+on: 
+    pull_request:
+        branches: [master]
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Build docker image test
+              run: docker build --target test -t myapp:test .
+            - name: Run Nginx configuration test
+              run: docker run --rm myapp:test nginx -t -c /etc/nginx/nginx.conf
+            - name: Run PHP sytnax test
+              run: docker run --rm myapp:test php -l /nginx_php/index.php
