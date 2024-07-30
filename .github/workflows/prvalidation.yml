@@ -1,6 +1,6 @@
 name: PR Validation
 on: 
-    pull_request:
+    push:
         branches: 
             - develop
 jobs:
@@ -9,9 +9,10 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
-            - name: Build docker image test
-              run: docker build --target test -t myapp:test .
-            - name: Run Nginx configuration test
-              run: docker run --rm myapp:test nginx -t -c /etc/nginx/nginx.conf
-            - name: Run PHP sytnax test
-              run: docker run --rm myapp:test php -l /nginx_php/index.php
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+            - name: Build and Run Docker Compose for Test
+              run: |
+                docker-compose -f docker-compose.yml up -d --build test
+                docker-compose -f docker-compose.yml exec test nginx -t -c /etc/nginx/nginx.conf
+                docker-compose -f docker-compose.yml exec test php -l /nginx_php/index.php
