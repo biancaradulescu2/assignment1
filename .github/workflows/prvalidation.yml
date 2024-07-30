@@ -10,9 +10,20 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v2
+              uses: docker/setup-buildx-action@v3
             - name: Build and Run Docker Compose for Test
               run: |
-                docker-compose -f docker-compose.yml up -d --build test
+                docker-compose -f docker-compose.yml up -d --build
+
+                # Wait for the database service to be ready
+                echo "Waiting for MySQL to be ready..."
+                until docker-compose -f docker-compose.yml exec db mysqladmin ping --silent; do
+                  echo "Waiting for database connection..."
+                  sleep 5
+                done
+
+                # Validate Nginx configuration
                 docker-compose -f docker-compose.yml exec test nginx -t -c /etc/nginx/nginx.conf
+                
+                # Validate PHP syntax
                 docker-compose -f docker-compose.yml exec test php -l /nginx_php/index.php
