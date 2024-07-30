@@ -8,7 +8,7 @@ RUN mkdir /nginx_php
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY index.php /nginx_php
+COPY index.php /nginx_php/
 
 COPY start.sh start.sh
 
@@ -24,7 +24,7 @@ RUN apk update && \
     apk upgrade && \
     apk add nginx php83 php83-fpm php83-mysqli curl
 
-RUN mkdir /nginx_php
+RUN mkdir /nginx_php/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 

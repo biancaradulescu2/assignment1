@@ -1,7 +1,8 @@
 name: PR Validation
 on: 
-    push:
-        branches: [master]
+    pull_request:
+        branches: 
+            - develop
 jobs:
     validate:
         runs-on: ubuntu-latest

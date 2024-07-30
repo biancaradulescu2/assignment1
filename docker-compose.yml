@@ -1,6 +1,22 @@
 version: '3'
 services:
+  db:
+    image: mysql:9
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: myapp_db
+      MYSQL_USER: myapp_user
+      MYSQL_PASSWORD: example
+    volumes:
+        - ./db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - test_net
   test:
+    depends_on: 
+      - db
     build:
       context: .
       target: test
@@ -8,7 +24,11 @@ services:
     container_name: test
     ports:
       - "9090:80"
+    networks:
+      - test_net
   prod:
+    depends_on:
+      - db
     build:
       context: .
       target: prod
@@ -16,3 +36,7 @@ services:
     container_name: prod
     ports:
       - "9091:80"
+    networks:
+      - test_net
+networks:
+  test_net:
