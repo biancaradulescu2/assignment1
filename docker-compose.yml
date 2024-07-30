@@ -1,5 +1,6 @@
 version: '3'
 services:
+
   db:
     image: mysql:9
     container_name: mysql
@@ -8,15 +9,22 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    command: echo $MYSQL_PASSWORD
     volumes:
         - ./db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
     networks:
       - test_net
+
   test:
     depends_on: 
       - db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     build:
       context: .
       target: test
@@ -26,9 +34,15 @@ services:
       - "9090:80"
     networks:
       - test_net
+
   prod:
     depends_on:
       - db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     build:
       context: .
       target: prod
