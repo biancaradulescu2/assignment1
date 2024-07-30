@@ -8,9 +8,6 @@ services:
       MYSQL_DATABASE: myapp_db
       MYSQL_USER: myapp_user
       MYSQL_PASSWORD: example
-    steps:
-      - name: Check comm
-        run: echo "In DB"
     volumes:
         - ./db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
