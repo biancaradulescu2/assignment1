@@ -14,14 +14,6 @@ jobs:
             - name: Build and Run Docker Compose for Test
               run: |
                 docker-compose -f docker-compose.yml up -d --build
-
-                # Wait for the database service to be ready
-                echo "Waiting for MySQL to be ready..."
-                until docker-compose run --rm db mysqladmin ping --silent; do
-                  echo "Waiting for database connection..."
-                  sleep 5
-                done
-
                 # Validate Nginx configuration
                 docker-compose -f docker-compose.yml exec test nginx -t -c /etc/nginx/nginx.conf
                 
