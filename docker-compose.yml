@@ -14,7 +14,6 @@ services:
       - "3306:3306"
     networks:
       - test_net
-    tty: true
   test:
     depends_on: 
       - db
@@ -27,7 +26,6 @@ services:
       - "9090:80"
     networks:
       - test_net
-    tty: true
   prod:
     depends_on:
       - db
@@ -38,7 +36,5 @@ services:
     container_name: prod
     ports:
       - "9091:80"
-    networks:
-      - test_net
 networks:
   test_net:

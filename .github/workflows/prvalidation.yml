@@ -17,7 +17,7 @@ jobs:
 
                 # Wait for the database service to be ready
                 echo "Waiting for MySQL to be ready..."
-                until docker-compose -f docker-compose.yml exec db mysqladmin ping --silent; do
+                until docker-compose run --rm db mysqladmin ping --silent; do
                   echo "Waiting for database connection..."
                   sleep 5
                 done
