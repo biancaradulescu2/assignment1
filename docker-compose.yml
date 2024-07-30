@@ -4,10 +4,10 @@ services:
     image: mysql:9
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: myapp_db
-      MYSQL_USER: myapp_user
-      MYSQL_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
         - ./db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
@@ -36,5 +36,7 @@ services:
     container_name: prod
     ports:
       - "9091:80"
+    networks:
+      - test_net
 networks:
   test_net:
