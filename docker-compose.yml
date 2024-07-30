@@ -26,6 +26,7 @@ services:
       - "9090:80"
     networks:
       - test_net
+    tty: true
   prod:
     depends_on:
       - db
