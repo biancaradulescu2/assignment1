@@ -2,7 +2,7 @@ name: PR Validation
 on: 
     push:
         branches: 
-            - develop
+            - master
 jobs:
     validate:
         runs-on: ubuntu-latest
