@@ -14,6 +14,7 @@ services:
       - "3306:3306"
     networks:
       - test_net
+    tty: true
   test:
     depends_on: 
       - db
