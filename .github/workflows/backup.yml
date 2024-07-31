@@ -23,6 +23,6 @@ jobs:
               run: mkdir -p /backup
             - name: Make backup
               run: mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%T).sql
-            - name: Delete old backups
+            - name: Delete old backup
               run: find /backup -type f -name "*.sql" -mtime +7 -exec rm {} \;
 
