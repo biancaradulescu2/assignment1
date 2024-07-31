@@ -45,12 +45,6 @@ jobs:
           run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
         - name: Checkout code
           uses: actions/checkout@v4
-        - name: Copy secrets into local file
-          run: |
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
-            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
-            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
-            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
         - name: Copy files with SCP
           run: |
             scp -rv /home/runner/work/firstAssignment/firstAssignment ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home
