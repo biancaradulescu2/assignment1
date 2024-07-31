@@ -22,8 +22,8 @@ jobs:
             - name: Docker compose
               run: docker-compose -f docker-compose.yml up -d --build
             - name: Make backup
-              run: docker-compose -f docker-compose.yml exec -ti db mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%T).sql
+              run: |
+                docker-compose -f docker-compose.yml exec db bash -c 'mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%H-%M-%S).sql'
             - name: Delete old backups
-              run: docker-compose -f docker-compose.yml exec -ti db find /backup -type f -name "*.sql" -mtime +7 -exec rm {} \;
-        
+              run: docker-compose -f docker-compose.yml exec db bash -c 'find /backup -type f -name "*.sql" -mtime +7 -exec rm {} \;'
 
