@@ -21,16 +21,22 @@ jobs:
               uses: actions/checkout@v4
             - name: Docker compose
               run: docker-compose -f docker-compose.yml up -d --build
+            - name: Verify dir
+              run: mkdir -p ./backup
             - name: Make backup
               run: |
                 docker-compose -f docker-compose.yml exec -ti db bash -c 'mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%H-%M-%S).sql'
             - name: Delete old backups
               run: docker-compose -f docker-compose.yml exec -ti db bash -c 'find /backup -type f -name "*.sql" -mtime +7 -exec rm {} \;'
-            - name: verif
-              run: ls /backup
-            - name: Upload artifacts
+            - name: Copy backup to host
+              run: docker cp $(docker-compose -f docker-compose.yml ps -q db):/backup ./backup
+            - name: Upload backup artifact
               uses: actions/upload-artifact@v3
               with:
-                name: backup
-                path: /backup
+                name: db-backups
+                path: ./backup
+            - name: Verify backup
+              run: ls ./backup
+              
+            
 
