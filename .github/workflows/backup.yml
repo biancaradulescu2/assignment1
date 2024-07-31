@@ -17,7 +17,7 @@ jobs:
             MYSQL_USER: ${{ secrets.MYSQL_USER }}
             MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         steps:
-            - name: Checkout code
+            - name: Checkout 
               uses: actions/checkout@v4
             - name: Docker compose
               run: docker-compose -f docker-compose.yml up -d --build
