@@ -1,36 +1,62 @@
-name: PR Validation
+name: Testing
 on: 
-    pull_request:
-        
+  pull_request:
 jobs:
     validate:
-        environment: Test
-        env:
-            MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-            MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-            MYSQL_USER: ${{ secrets.MYSQL_USER }}
-            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
-            # - name: Verify secrets
-            #   run: echo "$MYSQL_USER"
-            # - name: Set environment variables
-            #   run: |
-            #       echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $GITHUB_ENV
-            #       echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> $GITHUB_ENV
-            #       echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> $GITHUB_ENV
-            
-            #       echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> $GITHUB_ENV
-            - name: Build and Run Docker compose for Test
-              run: |
-                docker-compose -f docker-compose.yml up -d --build
-                # Validate Nginx configuration
-                docker-compose -f docker-compose.yml exec -ti test nginx -t -c /etc/nginx/nginx.conf
-                echo "nginx successful"
-                # Validate PHP syntax
-                docker-compose -f docker-compose.yml exec -ti test php -l /nginx_php/index.php
-                echo "php successful"
+      environment: Test
+      env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      runs-on: ubuntu-latest
+      steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+          - name: Build and Run Docker Compose for Test
+            run: |
+              docker-compose -f compose.yaml up -d --build
+              echo "build"
+              # Validate Nginx configuration
+              docker-compose -f compose.yaml exec -ti test nginx -t -c /etc/nginx/nginx.conf
+              echo "nginx verified"
+              # Validate PHP syntax
+              docker-compose -f compose.yaml exec -ti test php -l /nginx_php/index.php
+              echo "php verified"
+              pwd
+              ls -la
+    deployment:
+      needs: validate
+      environment: Test
+      env:
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+        MYSQL_USER: ${{ secrets.MYSQL_USER }}
+        MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: Install SSH Key
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.ID_RSA }}
+            known_hosts: 'placeholder'
+        - name: Adding Known Hosts
+          run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+        - name: Checkout code
+          uses: actions/checkout@v4
+        - name: Copy Secrets into local file
+          run: |
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
+            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
+            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
+            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
+        - name: Copy files with SCP
+          run: |
+            scp -rv /home/runner/work/firstAssignment/firstAssignment ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/grigo
+            scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/grigo/mysql /home/runner/work/firstAssignment/firstAssignment/
+            ls /home/runner/work/firstAssignment/firstAssignment/
+        - name: Spin up the containers
+          run: |
+            ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd firstAssignment; docker compose down; docker compose up --build -d"

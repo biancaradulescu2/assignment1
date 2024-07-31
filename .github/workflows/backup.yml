@@ -1,42 +1,47 @@
 name: DB Backup
 on:
-    workflow_run:
-        workflows: ["PR Validation"]
-        types: 
-            - completed
-    workflow_dispatch:
+    # workflow_run:
+    #     workflows: ["PR Validation"]
+    #     types: 
+    #         - completed
     schedule:
         - cron: '0 0 * * *' # Runs every day at midnight
 jobs:
     backup:
-        runs-on: ubuntu-latest
         environment: Prod
         env:
             MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
             MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
             MYSQL_USER: ${{ secrets.MYSQL_USER }}
             MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        runs-on: ubuntu-latest
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-            - name: Docker compose
-              run: docker-compose -f docker-compose.yml up -d --build
-            - name: Verify dir
-              run: mkdir -p ./backup
-            - name: Make backup
-              run: |
-                docker-compose -f docker-compose.yml exec -ti db bash -c 'mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%H-%M-%S).sql'
-            - name: Delete old backups
-              run: docker-compose -f docker-compose.yml exec -ti db bash -c 'find /backup -type f -name "*.sql" -mtime +7 -exec rm {} \;'
-            - name: Copy backup to host
-              run: docker mv $(docker-compose -f docker-compose.yml ps -q db):/backup/* ./backup
-            - name: Upload backup artifacts
-              uses: actions/upload-artifact@v3
-              with:
-                name: db-backups
-                path: ./backup
-            - name: Verify
-              run: ls ./backup
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Install SSH Key
+            uses: shimataro/ssh-key-action@v2
+            with:
+              key: ${{ secrets.ID_RSA }}
+              known_hosts: 'placeholder'
+
+          - name: Adding Known Hosts
+            run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          
+          - name: Make backup dir
+            run: |
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/firstAssignment; mkdir -p ./backup"
+
+          - name: Spin up the containers
+            run: |
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/firstAssignment; docker compose up -d --build"
+
+          - name: Make backup
+            run: |
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose -f ~/firstAssignment/docker-compose.yml exec -ti db bash -c 'mysqldump -h \$MYSQL_HOST -u \$MYSQL_USER -p\$MYSQL_PASSWORD \$MYSQL_DATABASE > ~/firstAssignment/backup/backup_\$(date +%F_%H-%M-%S).sql'"
+
+          - name: Clean up old backups on VM
+            run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "find ~/firstAssignment/backup -type f -name '*.sql' -mtime +7 -exec rm {} \;"
               
             
 
