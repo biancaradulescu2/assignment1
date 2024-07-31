@@ -34,6 +34,8 @@ jobs:
         MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       runs-on: ubuntu-latest
       steps:
+        - name: Verif 
+          run: echo ${{ secrets.SSH_KEY }}
         - name: Install SSH Key
           uses: shimataro/ssh-key-action@v2
           with:
