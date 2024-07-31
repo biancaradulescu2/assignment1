@@ -3,6 +3,7 @@ FROM alpine:latest as Test
 RUN apk update && \
     apk upgrade && \
     apk add nginx php83 php83-fpm php83-mysqli curl
+RUN apk add strace bind-tools
 
 RUN apk add strace bind-tools
 
@@ -13,7 +14,11 @@ COPY index.php /nginx_php/
 
 COPY start.sh start.sh
 
+COPY backup.sh /usr/local/bin/backup.sh
+
 RUN chmod u+x start.sh
+RUN rm /etc/nginx/http.d/default.conf
+# RUN cp /nginx_php/index.php index.html 
 
 RUN rm /etc/nginx/http.d/*.conf
 

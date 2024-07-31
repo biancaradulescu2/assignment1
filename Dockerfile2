@@ -1,19 +1,15 @@
-FROM alpine:latest as Test
+FROM mysql:latest
 
-RUN apk update && \
-    apk upgrade && \
-    apk add nginx php83 php83-fpm php83-mysqli curl 
+RUN mkdir /backup
 
-RUN mkdir /nginx_php
+COPY backup.sh /usr/local/bin/backup.sh
 
-COPY nginx.conf /etc/nginx/nginx.conf
+RUN chmod +x /usr/local/bin/backup.sh
 
-COPY index.php /nginx_php/
+RUN apt-get update && apt-get install -y cron
 
-COPY start.sh start.sh
+RUN echo "0 3 * * * /usr/local/bin/backup.sh" > /etc/cron.d/backup
 
-RUN chmod u+x start.sh
+RUN chmod 0644 /etc/cron.d/backup
 
-HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
-
-CMD ./start.sh
+CMD ["cron", "-f"]

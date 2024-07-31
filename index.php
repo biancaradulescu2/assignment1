@@ -13,14 +13,15 @@ if ($conn->connect_error) {
 }
 
 // Interogare pentru a selecta primul nume
-$sql = "SELECT name FROM names ORDER BY id ASC LIMIT 1";
+$sql = "SELECT name FROM names ORDER BY id ASC";
 $result = $conn->query($sql);
 
 // Verificare și afișare rezultat
 if ($result->num_rows > 0) {
     // Afișează primul nume
-    $row = $result->fetch_assoc();
-    echo "Hello,  " . $row["name"] . "!";
+    while($row = $result->fetch_assoc()){;
+    echo "Hello,  " . $row["name"] . "!<br>";
+    }
 } else {
     echo "Nu sunt date disponibile.";
 }

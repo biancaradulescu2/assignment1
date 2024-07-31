@@ -1,8 +1,7 @@
 name: PR Validation
 on: 
     pull_request:
-        branches: 
-            - testing
+        
 jobs:
     validate:
         environment: Test
@@ -24,6 +23,7 @@ jobs:
             #       echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $GITHUB_ENV
             #       echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> $GITHUB_ENV
             #       echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> $GITHUB_ENV
+            
             #       echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> $GITHUB_ENV
             - name: Build and Run Docker Compose for Test
               run: |
@@ -35,3 +35,5 @@ jobs:
                 # Validate PHP syntax
                 docker-compose -f docker-compose.yml exec -ti test php -l /nginx_php/index.php
                 echo "php verif"
+                # Run backup script
+                docker-compose -f docker-compose.yml exec -T db /usr/local/bin/backup.sh
