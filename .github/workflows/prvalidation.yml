@@ -25,7 +25,7 @@ jobs:
             #       echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> $GITHUB_ENV
             
             #       echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> $GITHUB_ENV
-            - name: Build and Run Docker compose for Test
+            - name: Build and Run Docker Compose for Test
               run: |
                 docker-compose -f docker-compose.yml up -d --build
                 # Validate Nginx configuration
