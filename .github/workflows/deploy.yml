@@ -15,4 +15,4 @@ jobs:
         environment: Prod
         steps: 
             - name: Echo
-              run: echo "Pull Request"
+              run: echo "Pull Request merged!"
