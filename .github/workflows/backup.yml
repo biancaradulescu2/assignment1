@@ -19,10 +19,11 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
-            - name: Ensure backup directory exists
-              run: mkdir -p /backup
+            - name: Docker compose
+              run: docker-compose -f docker-compose.yml up -d --build
             - name: Make backup
-              run: mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%T).sql
+              run: docker-compose -f docker-compose.yml exec -ti db mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%T).sql
             - name: Delete old backup
-              run: find /backup -type f -name "*.sql" -mtime +7 -exec rm {} \;
+              run: docker-compose -f docker-compose.yml exec -ti db find /backup -type f -name "*.sql" -mtime +7 -exec rm {} \;
+        
 
