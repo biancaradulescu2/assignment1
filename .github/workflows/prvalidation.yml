@@ -45,8 +45,8 @@ jobs:
           uses: actions/checkout@v4
         - name: Copy files with SCP
           run: |
-            scp -rv /home/runner/work/firstAssignment/firstAssignment ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home
+            scp -rv -i ~/.ssh/id_rsa /home/runner/work/firstAssignment/firstAssignment ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home
             ls /home/runner/work/firstAssignment/firstAssignment/
         - name: Spin up containers
           run: |
-            ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd firstAssignment; docker compose down; docker compose up --build -d"
+            ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd firstAssignment; docker compose down; docker compose up --build -d"
