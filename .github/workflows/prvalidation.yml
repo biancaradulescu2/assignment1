@@ -53,6 +53,6 @@ jobs:
           run: |
             scp -rv /home/runner/work/firstAssignment/firstAssignment ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home
             ls /home/runner/work/firstAssignment/firstAssignment/
-        - name: Spin up the containers
+        - name: Spin up containers
           run: |
             ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd firstAssignment; docker compose down; docker compose up --build -d"
