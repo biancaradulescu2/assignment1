@@ -16,12 +16,11 @@ jobs:
             MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
             MYSQL_USER: ${{ secrets.MYSQL_USER }}
             MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-            BACKUP_FILE: "/backup/backup_$(date +%F_%T).sql"
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
             - name: Make backup
-              run: mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > $BACKUP_FILE
+              run: mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%T).sql
             - name: Delete old backups
               run: find $BACKUP_DIR -type f -name "*.sql" -mtime +7 -exec rm {} \;
 
