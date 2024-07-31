@@ -2,14 +2,3 @@ FROM mysql:latest
 
 RUN mkdir /backup
 
-COPY backup.sh /usr/local/bin/backup.sh
-
-RUN chmod +x /usr/local/bin/backup.sh
-
-RUN apt-get update && apt-get install -y cron
-
-RUN echo "0 3 * * * /usr/local/bin/backup.sh" > /etc/cron.d/backup
-
-RUN chmod 0644 /etc/cron.d/backup
-
-CMD ["cron", "-f"]

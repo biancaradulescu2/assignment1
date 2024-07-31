@@ -12,25 +12,38 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: example
+    #   MYSQL_DATABASE: myapp_db
+    #   MYSQL_USER: myapp_user
+    #   MYSQL_PASSWORD: example
     ports:
       - 9090:80
     networks:
       - test_net
 
   db:
-    image: mysql:9
+    build:
+      context: .
+      dockerfile: Dockerfile2
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: example
+    #   MYSQL_DATABASE: myapp_db
+    #   MYSQL_USER: myapp_user
+    #   MYSQL_PASSWORD: example
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
     volumes:
         - ./db.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./backup:/backup
     ports:
       - "3306:3306"
     networks:
@@ -49,6 +62,11 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: example
+    #   MYSQL_DATABASE: myapp_db
+    #   MYSQL_USER: myapp_user
+    #   MYSQL_PASSWORD: example
     ports:
       - "9091:80"
     networks:

@@ -17,10 +17,8 @@ COPY start.sh start.sh
 COPY backup.sh /usr/local/bin/backup.sh
 
 RUN chmod u+x start.sh
-RUN rm /etc/nginx/http.d/default.conf
-# RUN cp /nginx_php/index.php index.html 
-
 RUN rm /etc/nginx/http.d/*.conf
+# RUN cp /nginx_php/index.php index.html 
 
 HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
 

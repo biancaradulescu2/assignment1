@@ -1,0 +1,27 @@
+name: DB Backup
+on:
+    workflow_run:
+        workflows: ["PR Validation"]
+        types: 
+            - completed
+    workflow_dispatch:
+    schedule:
+        - cron: '0 0 * * *' # Runs every day at midnight
+jobs:
+    backup:
+        runs-on: ubuntu-latest
+        environment: Prod
+        env:
+            MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+            MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+            MYSQL_USER: ${{ secrets.MYSQL_USER }}
+            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+            BACKUP_FILE: "/backup/backup_$(date +%F_%T).sql"
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Make backup
+              run: mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > $BACKUP_FILE
+            - name: Delete old backups
+              run: find $BACKUP_DIR -type f -name "*.sql" -mtime +7 -exec rm {} \;
+

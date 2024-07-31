@@ -1,8 +1,8 @@
 <?php
 $servername = "db"; //numele serviciului din docker-compose
-$username = getenv('MYSQL_USER');
-$password = getenv('MYSQL_PASSWORD');
-$dbname = getenv('MYSQL_DATABASE');
+$username = "myapp_user";
+$password = "example";
+$dbname = "myapp_db";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
