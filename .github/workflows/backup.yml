@@ -19,6 +19,8 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+            - name: Ensure backup directory exists
+              run: mkdir -p /backup
             - name: Make backup
               run: mysqldump -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup_$(date +%F_%T).sql
             - name: Delete old backups
