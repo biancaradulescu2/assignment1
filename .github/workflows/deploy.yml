@@ -5,13 +5,14 @@ on:
         types: 
             - completed
         branches: master
+    pull_request:
+        types:
+            - closed
 jobs:
-    deploy:
+    echo-if-merged:
+        if: github.event.pull_request.merged == true
         runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-            # - name: Build docker image test
-            #   run: docker build --target prod -t myapp:prod .
-            # - name: Deploy to production server
-            #   run: 
+        environment: Prod
+        steps: 
+            - name: Echo
+              run: echo "Pull Request merged!"

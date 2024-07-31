@@ -1,5 +1,21 @@
-version: '3'
 services:
+  test:
+    depends_on:
+    - db
+    build:
+      context: .
+      target: test
+    image: test
+    container_name: test
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - 9090:80
+    networks:
+      - test_net
 
   db:
     image: mysql:9
@@ -9,7 +25,10 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    command: echo $MYSQL_PASSWORD
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
     volumes:
         - ./db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
@@ -17,40 +36,23 @@ services:
     networks:
       - test_net
 
-  test:
-    depends_on: 
-      - db
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    build:
-      context: .
-      target: test
-    image: test
-    container_name: test
-    ports:
-      - "9090:80"
-    networks:
-      - test_net
-
   prod:
     depends_on:
       - db
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     build:
       context: .
       target: prod
     image: prod
     container_name: prod
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "9091:80"
     networks:
       - test_net
+
 networks:
   test_net:
