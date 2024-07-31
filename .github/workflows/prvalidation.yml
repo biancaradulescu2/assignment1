@@ -54,8 +54,7 @@ jobs:
             echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/firstAssignment/firstAssignment/.env
         - name: Copy files with SCP
           run: |
-            scp -rv /home/runner/work/firstAssignment/firstAssignment ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/grigo
-            scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/grigo/mysql /home/runner/work/firstAssignment/firstAssignment/
+            scp -rv /home/runner/work/firstAssignment/firstAssignment ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home
             ls /home/runner/work/firstAssignment/firstAssignment/
         - name: Spin up the containers
           run: |
