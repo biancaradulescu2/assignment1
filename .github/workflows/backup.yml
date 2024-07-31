@@ -35,7 +35,7 @@ jobs:
               with:
                 name: db-backups
                 path: ./backup
-            - name: Verify backup
+            - name: Verify
               run: ls ./backup
               
             
