@@ -27,11 +27,11 @@ jobs:
     deployment:
       needs: validate
       environment: Test
-      # env:
-      #   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      #   MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-      #   MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      #   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      env:
+        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+        MYSQL_USER: ${{ secrets.MYSQL_USER }}
+        MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       runs-on: ubuntu-latest
       steps:
         - name: Install SSH Key
