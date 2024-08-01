@@ -7,20 +7,19 @@ RUN apk add strace bind-tools
 
 RUN apk add strace bind-tools
 
-RUN mkdir /nginx_php
+RUN mkdir /nginx_php/
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY index.php /nginx_php/
+COPY index.php /nginx_php
+COPY www.conf /etc/php83/php-fpm.d/www.conf
+
+HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
 
 COPY start.sh start.sh
 
-COPY backup.sh /usr/local/bin/backup.sh
-
 RUN chmod u+x start.sh
-RUN rm /etc/nginx/http.d/*.conf
-# RUN cp /nginx_php/index.php index.html 
 
-HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
+RUN rm /etc/nginx/http.d/*.conf
 
 CMD ./start.sh
 
@@ -34,6 +33,7 @@ RUN mkdir /nginx_php/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY index.php /nginx_php
+COPY www.conf /etc/php83/php-fpm.d/www.conf
 
 HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
 

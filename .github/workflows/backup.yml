@@ -1,9 +1,9 @@
 name: DB Backup
 on:
-    # workflow_run:
-    #     workflows: ["PR Validation"]
-    #     types: 
-    #         - completed
+    workflow_run:
+        workflows: ["Deploy"]
+        types: 
+            - completed
     schedule:
         - cron: '0 0 * * *' # Runs every day at midnight
 jobs:
@@ -16,8 +16,6 @@ jobs:
             MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         runs-on: ubuntu-latest
         steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
 
           - name: Install SSH Key
             uses: shimataro/ssh-key-action@v2
@@ -30,18 +28,14 @@ jobs:
           
           - name: Make backup dir
             run: |
-              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/firstAssignment; mkdir -p ./backup"
-
-          - name: Spin up the containers
-            run: |
-              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/firstAssignment; docker compose up -d --build"
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ./backup"
 
           - name: Make backup
             run: |
-              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose -f ~/firstAssignment/docker-compose.yml exec -ti db bash -c 'mysqldump -h \$MYSQL_HOST -u \$MYSQL_USER -p\$MYSQL_PASSWORD \$MYSQL_DATABASE > ~/firstAssignment/backup/backup_\$(date +%F_%H-%M-%S).sql'"
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec -ti db bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > ./backup/$(date +%F_%H-%M-%S).sql'"
 
           - name: Clean up old backups on VM
-            run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "find ~/firstAssignment/backup -type f -name '*.sql' -mtime +7 -exec rm {} \;"
+            run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "find ~/backup -type f -name '*.sql' -mtime +7 -exec rm {} \;"
               
             
 
