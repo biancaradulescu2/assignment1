@@ -49,10 +49,10 @@ jobs:
 
         - name: Copy Secrets into local file
           run: |
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/ .env
-            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/runner/work/assignment1/assignment1/ .env
-            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/runner/work/assignment1/assignment1/ .env
-            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/ .env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/.env
+            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/runner/work/assignment1/assignment1/.env
+            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/runner/work/assignment1/assignment1/.env
+            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/.env
 
         - name: Copy files with SCP
           run: |
