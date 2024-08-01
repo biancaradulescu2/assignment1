@@ -60,8 +60,8 @@ jobs:
             ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm -rf /home/bianca/assignment1"
             scp -rv /home/runner/work/assignment1/assignment1 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca
             ls /home/runner/work/assignment1/assignment1
-        - name: Make backup dir
-          run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /home/bianca/backup"
+        # - name: Make backup dir
+        #   run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /home/bianca/backup"
         - name: Spin up containers
           run: |
             ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd assignment1; docker compose down; docker compose up --build -d"
