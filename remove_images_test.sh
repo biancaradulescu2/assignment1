@@ -9,13 +9,12 @@ TOKEN=$(curl -s "$DOCKER_REGISTRY_URL/token?service=registry.docker.io&scope=rep
 TO_DELETE=$(curl -s -H "Authorization: Bearer $TOKEN" "$DOCKER_REGISTRY_URL/$REPOSITORY/tags/list" | jq -r '.tags[]' | sort | head -n 4)
 echo "$TO_DELETE"
 
-for TAG in $TO_DELETE; do
-    # Obține digestul imaginii
-    DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" "$DOCKER_REGISTRY_URL/$REPOSITORY/manifests/$TAG" | jq -r .config.digest)
+# for TAG in $TO_DELETE; do
+#     # Obține digestul imaginii
+#     DIGEST=$(curl -s -H "Authorization: Bearer $TOKEN" "$DOCKER_REGISTRY_URL/$REPOSITORY/manifests/$TAG" | jq -r .config.digest)
 
-    # Șterge imaginea
-    echo "Șterg imaginea cu tag-ul: $TAG"
-    curl -s -X DELETE -H "Authorization: Bearer $TOKEN" "$DOCKER_REGISTRY_URL/$REPOSITORY/manifests/$DIGEST"
-done
+#     # Șterge imaginea
+#     curl -s -X DELETE -H "Authorization: Bearer $TOKEN" "$DOCKER_REGISTRY_URL/$REPOSITORY/manifests/$DIGEST"
+# done
 
 
