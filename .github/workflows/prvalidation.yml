@@ -15,7 +15,7 @@ jobs:
             uses: actions/checkout@v4
           - name: Set up Docker Buildx
             uses: docker/setup-buildx-action@v3
-          - name: Build and Run Docker Compose for Test
+          - name: Build and Run Docker Compose 
             run: |
               docker-compose -f docker-compose.yml up -d --build
               # Validate Nginx configuration
