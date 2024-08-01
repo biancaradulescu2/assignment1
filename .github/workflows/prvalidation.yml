@@ -40,7 +40,7 @@ jobs:
             key: ${{ secrets.ID_RSA }}
             known_hosts: 'placeholder'
 
-        - name: Adding Known Host
+        - name: Adding Known Hosts
           run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
         - name: Checkout code
