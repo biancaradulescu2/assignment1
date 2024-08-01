@@ -71,6 +71,8 @@ Triggered by a pull request in the **Test** environment. It includes:
 	-   Builds and starts the containers.
 	-   Validates Nginx configuration.
 	-   Validates PHP syntax.
+ 
+![Screenshot 2024-08-01 150433](https://github.com/user-attachments/assets/70b5e481-5901-4464-8024-d481e003be5f)
 
 **2. Deployment Job**
 
