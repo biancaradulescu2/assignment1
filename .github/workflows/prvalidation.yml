@@ -71,7 +71,9 @@ jobs:
               ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec mysql bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup.sql'"
         - name: Copy backup files with SCP
           run: |
-              scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/backup /home/runner/work/assignment1/assignment1/backup
+              mkdir -p /home/runner/work/assignment1/assignment1/backup
+              scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/assignment1/backup /home/runner/work/assignment1/assignment1/backup
+        
         - name: Upload database backup
           uses: actions/upload-artifact@v4
           with:
