@@ -1,3 +1,5 @@
+#! /bin/bash
+
 START_VERSION=$(( $1 + 1 ))
 
 

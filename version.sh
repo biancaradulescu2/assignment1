@@ -1,4 +1,5 @@
-# Read the current version from version.txt
+#! /bin/bash
+
 version=$(cat version.txt)
 echo "Current version: $version"
 
