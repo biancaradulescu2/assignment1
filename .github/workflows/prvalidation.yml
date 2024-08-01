@@ -65,8 +65,10 @@ jobs:
         - name: Spin up containers
           run: |
             ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd assignment1; docker compose down; docker compose up --build -d"
+          
         - name: Make backup
           run: |
+              timeout 60
               ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec mysql bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup.sql'"
         - name: Copy backup files with SCP
           run: |
