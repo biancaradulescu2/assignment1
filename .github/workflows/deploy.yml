@@ -10,12 +10,14 @@ on:
             - closed
 jobs:
     deployment:
+      if: github.event.pull_request.merged == true
       environment: Prod
       env:
         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
         MYSQL_USER: ${{ secrets.MYSQL_USER }}
         MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        
       runs-on: ubuntu-latest
       steps:
         - name: Install SSH Key
@@ -34,12 +36,30 @@ jobs:
         #   run: |
         #     scp -rv /home/runner/work/assignment1/assignment1 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home
         #     ls /home/runner/work/assignment1/assignment1/
-        - name: Spin up containers
+        # - name: Spin up containers
+        #   run: |
+        #     ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd assignment1; docker compose down; docker compose up --build -d"
+        - name: Change commit version
           run: |
-            ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd assignment1; docker compose down; docker compose up --build -d"
-        - name: Restore latest backup
+            chmod u+x version.sh
+            ./version.sh
+        - name: Git config
           run: |
-              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-                latest_backup=\$(ls -t ./backup/*.sql | head -n 1) &&
-                docker exec -ti db bash -c 'mysql -h \$MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < \$latest_backup'
-              "
+            git config --global user.username "${{ secrets.GIT_USERNAME }}"
+            git config --global user.email "${{ secrets.GIT_EMAIL }}"
+        - name: Commit files
+          run: |
+            version=$(cat version.txt)
+            git add .
+            git commit -m "Release version $version"
+            git tag -a "$version" -m "$version"
+            git push origin --tags
+            git push
+
+        
+        - name: Copy version file in VM
+          run: |
+            ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm -rf /home/bianca/assignment1/version.txt"
+            scp -rv /home/runner/work/assignment1/assignment1/version.txt ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/assignment1/version.txt
+
+        

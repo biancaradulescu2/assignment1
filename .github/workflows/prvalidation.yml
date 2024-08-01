@@ -27,11 +27,11 @@ jobs:
     deployment:
       needs: validate
       environment: Test
-      env:
-        MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-        MYSQL_USER: ${{ secrets.MYSQL_USER }}
-        MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      # env:
+      #   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      #   MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      #   MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      #   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       runs-on: ubuntu-latest
       steps:
         - name: Install SSH Key
@@ -53,6 +53,7 @@ jobs:
             echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/runner/work/assignment1/assignment1/.env
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/runner/work/assignment1/assignment1/.env
             echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/.env
+            cat /home/runner/work/assignment1/assignment1/.env
 
         - name: Copy files with SCP
           run: |
@@ -75,3 +76,4 @@ jobs:
           with:
             name: Database Backup
             path: /home/runner/work/assignment1/assignment1/backup
+            retention-days: 7

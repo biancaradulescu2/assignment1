@@ -1,9 +1,9 @@
 name: DB Backup
 on:
-    workflow_run:
-        workflows: ["Deploy"]
-        types: 
-            - completed
+    # workflow_run:
+    #     workflows: ["Deploy"]
+    #     types: 
+    #         - completed
     schedule:
         - cron: '0 0 * * *' # Runs every day at midnight
 jobs:
@@ -32,10 +32,17 @@ jobs:
 
           - name: Make backup
             run: |
-              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec -ti db bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > ./backup/$(date +%F_%H-%M-%S).sql'"
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec -ti mysql bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > ./backup/$(date +%F_%H-%M-%S).sql'"
 
-          - name: Clean up old backups on VM
-            run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "find ~/backup -type f -name '*.sql' -mtime +7 -exec rm {} \;"
-              
+          - name: Copy backup files with SCP
+            run: |
+                scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/backup /home/runner/work/assignment1/assignment1/backup
+          
+          - name: Upload database backup
+            uses: actions/upload-artifact@v4
+            with:
+              name: Database Backup
+              path: /home/runner/work/assignment1/assignment1/backup
+              retention-days: 7    
             
 
