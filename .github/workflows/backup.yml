@@ -1,7 +1,7 @@
 name: DB Backup
 on:
-    schedule:
-        - cron: '23 * * * *' 
+  schedule:
+    - cron: "27 * * * *" 
 jobs:
     backup:
         environment: Prod
