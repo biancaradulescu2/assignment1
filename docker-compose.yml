@@ -43,7 +43,7 @@ services:
       retries: 10
     volumes:
         - ./db.sql:/docker-entrypoint-initdb.d/init.sql
-        - ./backup:/backup
+        - home/bianca/backup:/backup
     ports:
       - "3306:3306"
     networks:

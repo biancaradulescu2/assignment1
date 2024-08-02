@@ -56,7 +56,7 @@ jobs:
             cat /home/runner/work/assignment1/assignment1/.env
         - name: Copy files with SCP
           run: |
-            ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm -rf /home/bianca/assignment1"
+            pwd
             scp -rv /home/runner/work/assignment1/assignment1 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca
             ls /home/runner/work/assignment1/assignment1
         - name: Make backup dir
@@ -68,11 +68,11 @@ jobs:
         - name: Make backup
           run: |
               sleep 60
-              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec mysql bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/backup.sql'"
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec mysql bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > ./backup/backup.sql'"
         - name: Copy backup files with SCP
           run: |
               mkdir -p /home/runner/work/assignment1/assignment1/backup
-              scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/assignment1/backup /home/runner/work/assignment1/assignment1/backup
+              scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/backup /home/runner/work/assignment1/assignment1/backup
         
         - name: Upload database backup
           uses: actions/upload-artifact@v4

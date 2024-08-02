@@ -26,17 +26,18 @@ jobs:
           - name: Adding Known Hosts
             run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
           
-          # - name: Make backup dir
-          #   run: |
-          #     ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /home/bianca/backup"
+          - name: Make backup dir
+            run: |
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ./backup"
 
           - name: Make backup
             run: |
-              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec -ti mysql bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > /backup/$(date +%F_%H-%M-%S).sql'"
+              ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker exec mysql bash -c 'mysqldump -h db -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > ./backup/$(date +%F_%H-%M-%S).sql'"
 
           - name: Copy backup files with SCP
             run: |
                 scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/backup /home/runner/work/assignment1/assignment1/backup
+                ls /home/runner/work/assignment1/assignment1/backup
           
           - name: Upload database backup
             uses: actions/upload-artifact@v4
