@@ -47,14 +47,14 @@ jobs:
           uses: actions/checkout@v4
 
   
-        - name: Copy Secrets into local file
+        - name: Copy Secrets into env
           run: |
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/.env
             echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/runner/work/assignment1/assignment1/.env
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/runner/work/assignment1/assignment1/.env
             echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/.env
             cat /home/runner/work/assignment1/assignment1/.env
-        - name: Copy files
+        - name: Copy files to VM
           run: |
             pwd
             scp -rv /home/runner/work/assignment1/assignment1 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca
