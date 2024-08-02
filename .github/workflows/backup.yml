@@ -5,7 +5,8 @@ on:
     #     types: 
     #         - completed
     schedule:
-        - cron: '0 0 * * *' # Runs every day at midnigh
+        # - cron: '0 0 * * *' # Runs every day at midnight
+        - cron: '*/5 * * * *' 
 jobs:
     backup:
         environment: Prod
