@@ -2,7 +2,7 @@ name: DB Backup
 on:
     schedule:
         # - cron: '0 0 * * *' # Runs every day at midnight
-        - cron: '*/5 * * * *' 
+        - cron: '*/6 * * * *' 
 jobs:
     backup:
         environment: Prod
