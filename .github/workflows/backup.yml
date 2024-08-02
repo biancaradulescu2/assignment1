@@ -1,13 +1,7 @@
 name: DB Backup
 on:
-    # workflow_run:
-    #     workflows: ["Deploy"]
-    #     types: 
-    #         - completed
-    workflow_dispatch:
     schedule:
-        # - cron: '0 0 * * *' # Runs every day at midnight
-        - cron: '*/2 * * * *' 
+        - cron: '23 * * * *' 
 jobs:
     backup:
         environment: Prod
