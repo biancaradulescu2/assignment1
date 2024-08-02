@@ -54,11 +54,10 @@ jobs:
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/runner/work/assignment1/assignment1/.env
             echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/runner/work/assignment1/assignment1/.env
             cat /home/runner/work/assignment1/assignment1/.env
-        - name: Copy files with SCP
+        - name: Copy files
           run: |
             pwd
             scp -rv /home/runner/work/assignment1/assignment1 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca
-            ls /home/runner/work/assignment1/assignment1
         - name: Make backup dir
           run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /home/bianca/backup"
         - name: Spin up containers
@@ -73,7 +72,7 @@ jobs:
           run: |
               mkdir -p /home/runner/work/assignment1/assignment1/backup
               scp -rv ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/bianca/backup /home/runner/work/assignment1/assignment1/backup
-        
+              ls /home/runner/work/assignment1/assignment1
         - name: Upload database backup
           uses: actions/upload-artifact@v4
           with:
